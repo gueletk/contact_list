@@ -11,6 +11,14 @@ class ContactList
     puts "\t search - Search contacts"
   end
 
+  def self.display_all()
+    contacts_arr = Contact.all
+    contacts_arr.each.with_index do |contact, index|
+      puts "#{index + 1}. #{contact.name} (#{contact.email})"
+    end
+    puts "\n#{contacts_arr.length} records total"
+  end
+
   # TODO: Implement user interaction. This should be the only file where you use `puts` and `gets`.
 
 end
