@@ -74,7 +74,3 @@ class Contact
   end
 
 end
-
-class ContactNotFoundError < StandardError
-
-end

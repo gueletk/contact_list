@@ -40,9 +40,13 @@ class ContactList
 
   def show(id)
     contact = Contact.find(id)
-    puts "The contact with the id \##{id} is:"
-    puts "#{contact.name}"
-    puts "#{contact.email}"
+    begin
+      puts "The contact with the id \##{id} is:" if contact
+      puts "#{contact.name}"
+      puts "#{contact.email}"
+    rescue
+      puts "Sorry, there is no contact with id \##{id}"
+    end
   end
 
   def search(term)
