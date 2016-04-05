@@ -4,9 +4,6 @@ require_relative 'contact'
 # Interfaces between a user and their contact list. Reads from and writes to standard I/O.
 class ContactList
 
-  def initialize
-  end
-
   def main_menu()
     puts "Here is a list of available commands:"
     puts "\t new    - Create a new contact"
@@ -20,7 +17,7 @@ class ContactList
     contacts.each.with_index do |contact, index|
       puts "#{index + 1}. #{contact.name} (#{contact.email})"
     end
-    puts "\n#{@contacts.length} records total"
+    puts "\n#{contacts.length} records total"
   end
 
   def add_contact()
@@ -28,9 +25,17 @@ class ContactList
     name = STDIN.gets.chomp
     puts "Please enter the contact's email address"
     email = STDIN.gets.chomp
-    new_contact = Contact.create(name, email)
-    puts "The following contact has been created:\n"
-    puts "#{new_contact.name} (#{new_contact.email})"
+    same_email_contacts = Contact.search(email)
+    if same_email_contacts != []
+      puts "Sorry, a contact with that email address already exists"
+      same_email_contacts.each do |contact, id|
+        puts "#{id}. #{contact.name} (#{contact.email})"
+      end
+    else
+      new_contact = Contact.create(name, email)
+      puts "The following contact has been created:\n"
+      puts "#{new_contact.name} (#{new_contact.email})"
+    end
   end
 
   def show(id)
@@ -39,6 +44,15 @@ class ContactList
     puts "#{contact.name}"
     puts "#{contact.email}"
   end
+
+  def search(term)
+    results = Contact.search(term)
+    results.each do |contact, id|
+      puts "#{id}. #{contact.name} (#{contact.email})"
+    end
+    puts "\n#{results.length} records total found"
+  end
+
   # TODO: Implement user interaction. This should be the only file where you use `puts` and `gets`.
 
 end
@@ -53,5 +67,7 @@ when "list"
 when "new"
   contacts.add_contact
 when "show"
-  contacts.find_contact(ARGV[1].to_i)
+  contacts.show(ARGV[1].to_i)
+when "search"
+  contacts.search(ARGV[1])
 end

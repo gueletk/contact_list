@@ -49,9 +49,7 @@ class Contact
     def find(id)
       # TODO: Find the Contact in the 'contacts.csv' file with the matching id.
       CSV.foreach('contacts.csv') do |row|
-        #byebug
-        if $. == id then
-
+        if $. == id + 1 then
           contact = Contact.new(row[0], row[1])
           return contact
         end
@@ -63,6 +61,14 @@ class Contact
     # @return [Array<Contact>] Array of Contact objects.
     def search(term)
       # TODO: Select the Contact instances from the 'contacts.csv' file whose name or email attributes contain the search term.
+      matches = []
+      r_term = Regexp.new(term, Regexp::IGNORECASE)
+      CSV.foreach('contacts.csv') do |row|
+        if r_term.match(row[0]) || r_term.match(row[1])
+          matches << [Contact.new(row[0], row[1]), $. + 1]
+        end
+      end
+      matches
     end
 
   end
