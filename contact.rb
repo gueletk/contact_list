@@ -1,4 +1,5 @@
 require 'csv'
+require 'byebug'
 
 # Represents a person in an address book.
 # The ContactList class will work with Contact objects instead of interacting with the CSV file directly
@@ -47,6 +48,14 @@ class Contact
     # @return [Contact, nil] the contact with the specified id. If no contact has the id, returns nil.
     def find(id)
       # TODO: Find the Contact in the 'contacts.csv' file with the matching id.
+      CSV.foreach('contacts.csv') do |row|
+        #byebug
+        if $. == id then
+
+          contact = Contact.new(row[0], row[1])
+          return contact
+        end
+      end
     end
 
     # Search for contacts by either name or email.
@@ -57,5 +66,9 @@ class Contact
     end
 
   end
+
+end
+
+class ContactNotFoundError < StandardError
 
 end

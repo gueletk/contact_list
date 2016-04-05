@@ -5,7 +5,6 @@ require_relative 'contact'
 class ContactList
 
   def initialize
-    @contacts = Contact.all
   end
 
   def main_menu()
@@ -16,8 +15,9 @@ class ContactList
     puts "\t search - Search contacts"
   end
 
-  def display_all()
-    @contacts.each.with_index do |contact, index|
+  def list()
+    contacts = Contact.all
+    contacts.each.with_index do |contact, index|
       puts "#{index + 1}. #{contact.name} (#{contact.email})"
     end
     puts "\n#{@contacts.length} records total"
@@ -33,6 +33,12 @@ class ContactList
     puts "#{new_contact.name} (#{new_contact.email})"
   end
 
+  def show(id)
+    contact = Contact.find(id)
+    puts "The contact with the id \##{id} is:"
+    puts "#{contact.name}"
+    puts "#{contact.email}"
+  end
   # TODO: Implement user interaction. This should be the only file where you use `puts` and `gets`.
 
 end
@@ -43,7 +49,9 @@ case ARGV[0]
 when nil
   contacts.main_menu
 when "list"
-  contacts.display_all
+  contacts.list
 when "new"
   contacts.add_contact
+when "show"
+  contacts.find_contact(ARGV[1].to_i)
 end
