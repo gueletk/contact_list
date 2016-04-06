@@ -5,14 +5,15 @@ require 'byebug'
 # The ContactList class will work with Contact objects instead of interacting with the CSV file directly
 class Contact
 
-  attr_accessor :name, :email
+  attr_accessor :name, :email#, :phone_numbers
 
   # Creates a new contact object
   # @param name [String] The contact's name
   # @param email [String] The contact's email address
-  def initialize(name, email)
+  def initialize(name, email)#), phone_numbers)
     @name = name
     @email = email
+    #@phone_numbers = phone_numbers
   end
 
   # Provides functionality for managing contacts in the csv file.
@@ -23,10 +24,8 @@ class Contact
     def all
       # TODO: Return an Array of Contact instances made from the data in 'contacts.csv'.
       contacts = []
-      CSV.foreach('contacts.csv') do |row|
-        unless $. == 1 then
+      CSV.foreach('contacts.csv', :headers => true) do |row|
           contacts << Contact.new(row[0], row[1])
-        end
       end
       contacts
     end
