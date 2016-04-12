@@ -1,3 +1,4 @@
+require 'pg'
 require 'csv'
 require 'byebug'
 
@@ -24,8 +25,10 @@ class Contact
     def all
       # TODO: Return an Array of Contact instances made from the data in 'contacts.csv'.
       contacts = []
-      CSV.foreach('contacts.csv', :headers => true) do |row|
-          contacts << Contact.new(row[0], row[1])
+      connection.exec('SELECT * FROM contacts;') do |results|
+        results.each do |contact|
+          contacts << Contact.new(contact["name"], contact["email"])
+        end
       end
       contacts
     end
@@ -70,6 +73,14 @@ class Contact
       matches
     end
 
+    def connection
+      conn = PG.connect(
+        host: 'localhost',
+        dbname: 'contacts',
+        user: 'development',
+        password: 'development'
+      )
+    end
   end
 
 end
