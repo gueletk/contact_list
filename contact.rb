@@ -6,15 +6,30 @@ require 'byebug'
 # The ContactList class will work with Contact objects instead of interacting with the CSV file directly
 class Contact
 
-  attr_accessor :name, :email#, :phone_numbers
+  attr_accessor :name, :email, :id, :phone_numbers
 
   # Creates a new contact object
   # @param name [String] The contact's name
   # @param email [String] The contact's email address
-  def initialize(name, email)#), phone_numbers)
+  def initialize(name, email, id = nil)#phone_numbers = [], id = nil)
     @name = name
     @email = email
     #@phone_numbers = phone_numbers
+    @id = id
+  end
+
+  def save
+    if id
+      self.class.connection.exec_params('UPDATE contacts SET name=$1, email=$2 WHERE id = $3::int', [name, email, id])
+    else
+      self.class.connection.exec_params('INSERT INTO contacts (name, email) VALUES ($1, $2) RETURNING id;', [name, email]) do |id|
+        @id = id
+      end
+    end
+  end
+
+  def destroy
+    self.class.connection.exec_params('DELETE FROM contacts WHERE id=$1::int',[id])
   end
 
   # Provides functionality for managing contacts in the csv file.
@@ -27,7 +42,7 @@ class Contact
       contacts = []
       connection.exec('SELECT * FROM contacts;') do |results|
         results.each do |contact|
-          contacts << Contact.new(contact["name"], contact["email"])
+          contacts << Contact.new(contact["name"], contact["email"], contact["id"])
         end
       end
       contacts
@@ -39,9 +54,7 @@ class Contact
     def create(name, email)
       # TODO: Instantiate a Contact, add its data to the 'contacts.csv' file, and return it.
       contact = Contact.new(name, email)
-      CSV.open('contacts.csv', 'ab') do |csv|
-        csv << [name, email]
-      end
+      contact.save
       return contact
     end
 
@@ -49,10 +62,9 @@ class Contact
     # @param id [Integer] the contact id
     # @return [Contact, nil] the contact with the specified id. If no contact has the id, returns nil.
     def find(id)
-      # TODO: Find the Contact in the 'contacts.csv' file with the matching id.
-      CSV.foreach('contacts.csv') do |row|
-        if $. == id + 1 then
-          contact = Contact.new(row[0], row[1])
+      connection.exec_params('SELECT * FROM contacts WHERE id = $1::int;', [id]) do |result|
+        result.each do |c|
+          contact = Contact.new(c["name"], c["email"], c["id"])
           return contact
         end
       end
@@ -64,10 +76,11 @@ class Contact
     def search(term)
       # TODO: Select the Contact instances from the 'contacts.csv' file whose name or email attributes contain the search term.
       matches = []
-      r_term = Regexp.new(term, Regexp::IGNORECASE)
-      CSV.foreach('contacts.csv') do |row|
-        if r_term.match(row[0]) || r_term.match(row[1])
-          matches << [Contact.new(row[0], row[1]), $. + 1]
+      search_string = connection.escape_string(term).downcase
+      connection.exec("SELECT * FROM contacts WHERE LOWER(name) LIKE '%#{search_string}%' OR LOWER(email) LIKE '%#{search_string}%';") do |result|
+        result.each do |c|
+          contact = Contact.new(c["name"], c["email"], c["id"])
+          matches << contact
         end
       end
       matches
