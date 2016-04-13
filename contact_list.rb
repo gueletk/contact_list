@@ -65,7 +65,7 @@ class ContactList
       puts "#{id}. #{contact.name} (#{contact.email})"
     end
     puts "\n#{results.length} records total found"
-    
+
   end
 
   def update(id)
@@ -91,7 +91,7 @@ class ContactList
     end
 
   end
-  #
+  
   def destroy(id)
     begin
       contact = Contact.find(id)
