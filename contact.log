@@ -1,0 +1,18 @@
+# Logfile created on 2016-04-13 18:33:41 -0400 by logger.rb/47272
+D, [2016-04-13T18:33:41.654094 #3660] DEBUG -- :   [1m[36m (3.3ms)[0m  [1mDROP TABLE "contact"[0m
+D, [2016-04-13T18:33:41.659981 #3660] DEBUG -- :   [1m[35m (4.8ms)[0m  CREATE TABLE "contact" ("id" serial primary key, "name" character varying, "email" character varying) 
+D, [2016-04-13T18:34:30.526965 #3701] DEBUG -- :   [1m[36m (1.7ms)[0m  [1mDROP TABLE "contact"[0m
+D, [2016-04-13T18:34:30.533175 #3701] DEBUG -- :   [1m[35m (5.1ms)[0m  CREATE TABLE "contact" ("id" serial primary key, "name" character varying, "email" character varying) 
+D, [2016-04-13T18:34:51.447230 #3701] DEBUG -- :   [1m[36m (0.3ms)[0m  [1mBEGIN[0m
+D, [2016-04-13T18:34:51.463540 #3701] DEBUG -- :   [1m[35mContact Exists (1.7ms)[0m  SELECT  1 AS one FROM "contacts" WHERE LOWER("contacts"."email") = LOWER('rogers6745@hotmail.com') LIMIT 1
+D, [2016-04-13T18:34:51.465256 #3701] DEBUG -- :   [1m[36mSQL (0.5ms)[0m  [1mINSERT INTO "contacts" ("name", "email") VALUES ($1, $2) RETURNING "id"[0m  [["name", "Danielle Rogers"], ["email", "rogers6745@hotmail.com"]]
+D, [2016-04-13T18:34:51.465885 #3701] DEBUG -- :   [1m[35m (0.3ms)[0m  COMMIT
+D, [2016-04-13T18:34:59.503485 #3711] DEBUG -- :   [1m[36m (2.3ms)[0m  [1mDROP TABLE "contact"[0m
+D, [2016-04-13T18:34:59.510751 #3711] DEBUG -- :   [1m[35m (6.1ms)[0m  CREATE TABLE "contact" ("id" serial primary key, "name" character varying, "email" character varying) 
+D, [2016-04-13T18:34:59.513678 #3711] DEBUG -- :   [1m[36mContact Load (0.8ms)[0m  [1mSELECT "contacts".* FROM "contacts"[0m
+D, [2016-04-13T18:35:11.606439 #3717] DEBUG -- :   [1m[36m (1.8ms)[0m  [1mDROP TABLE "contact"[0m
+D, [2016-04-13T18:35:11.612556 #3717] DEBUG -- :   [1m[35m (4.8ms)[0m  CREATE TABLE "contact" ("id" serial primary key, "name" character varying, "email" character varying) 
+D, [2016-04-13T18:35:11.630547 #3717] DEBUG -- :   [1m[36mContact Load (0.4ms)[0m  [1mSELECT  "contacts".* FROM "contacts" WHERE "contacts"."id" = $1 LIMIT 1[0m  [["id", 9]]
+D, [2016-04-13T18:35:21.363932 #3725] DEBUG -- :   [1m[36m (3.8ms)[0m  [1mDROP TABLE "contact"[0m
+D, [2016-04-13T18:35:21.370011 #3725] DEBUG -- :   [1m[35m (4.7ms)[0m  CREATE TABLE "contact" ("id" serial primary key, "name" character varying, "email" character varying) 
+D, [2016-04-13T18:35:21.385194 #3725] DEBUG -- :   [1m[36mContact Load (0.4ms)[0m  [1mSELECT  "contacts".* FROM "contacts" WHERE "contacts"."id" = $1 LIMIT 1[0m  [["id", 90]]

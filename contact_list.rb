@@ -1,4 +1,5 @@
 require_relative 'contact'
+require_relative 'setup'
 
 # Interfaces between a user and their contact list. Reads from and writes to standard I/O.
 class ContactList
@@ -14,25 +15,30 @@ class ContactList
   end
 
   def list()
+
     contacts = Contact.all
     contacts.each do |contact|
       puts "#{contact.id}. #{contact.name} (#{contact.email})"
     end
     puts "\n#{contacts.length} records total"
+
   end
 
   def add_contact()
+
     puts "Please enter the full name of the contact."
     name = STDIN.gets.chomp
     puts "Please enter the contact's email address"
     email = STDIN.gets.chomp
-    begin
-      new_contact = Contact.create(name, email)
-      puts "The following contact has been created:\n"
-      puts "#{new_contact.name} (#{new_contact.email})"
-    rescue PG::UniqueViolation
+
+    new_contact = Contact.new(name: name, email: email)
+
+    puts "The following contact has been created:\n"
+    puts "#{new_contact.name} (#{new_contact.email})"
+    if !new_contact.save
       puts "Sorry, a contact with that email address already exists"
     end
+
   end
 
   def show(id)
@@ -42,12 +48,14 @@ class ContactList
       puts "The contact with the id \##{contact.id} is:"
       puts "#{contact.name}"
       puts "#{contact.email}"
-    rescue
+    rescue ActiveRecord::RecordNotFound
       puts "Sorry, there is no contact with id \##{id}"
     end
+
   end
 
   def search(term)
+
     if !term || term == ""
       puts "Cannot search for empty string"
       return
@@ -57,31 +65,39 @@ class ContactList
       puts "#{id}. #{contact.name} (#{contact.email})"
     end
     puts "\n#{results.length} records total found"
+    
   end
 
   def update(id)
+
     contact = Contact.find(id)
     puts "The current name for this contact is #{contact.name}. What should it be? (Press Enter to skip to the email)"
     new_name = STDIN.gets.chomp
     contact.name = new_name unless new_name == ""
+
     puts "The current email for this contact is #{contact.email}. What should it be? (Press Enter to skip and save)"
     new_email = STDIN.gets.chomp
     contact.email = new_email unless new_email == ""
-    begin
-      contact.save
+
+    contact.save
+    if contact.errors.any?
+      puts "The contact couldn't be updated for the following reasons:"
+      contact.errors.messages.each do |err|
+        p err
+      end
+    else
       puts "Contact \##{contact.id} has been updated."
       Contact.find(id)
-    rescue PG::UniqueViolation
-      puts "Could not update contact, that email address already exists."
     end
-  end
 
+  end
+  #
   def destroy(id)
-    contact = Contact.find(id)
     begin
+      contact = Contact.find(id)
       contact.destroy
       puts "Contact #{id} has been deleted."
-    rescue
+    rescue ActiveRecord::RecordNotFound
       puts "A contact with that ID does not exits and could not be deleted."
     end
   end
